@@ -1,23 +1,28 @@
+import { PrismaService } from './../prisma/prisma.service';
 import { Query, Resolver } from '@nestjs/graphql';
 import { PostModel } from './interfaces/post.model';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 @Resolver((of) => PostModel)
 export class PostsResolver {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  constructor() {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  @Query(() => [PostModel], { name: 'posts', nullable: true })
-  async getPosts() {
+  @Query(() => [PostModel], { name: 'fixedPosts', nullable: true })
+  async getPostsByFixedData() {
     return [
       {
         id: '1',
-        title: 'NestJS',
+        title: 'NestJS is so good.',
       },
       {
         id: '2',
-        title: 'GraphQL',
+        title: 'GraphQL is so good.',
       },
     ];
+  }
+
+  @Query(() => [PostModel], { name: 'prismaPosts', nullable: true })
+  async getPostsByPrisma() {
+    return this.prisma.post.findMany();
   }
 }
